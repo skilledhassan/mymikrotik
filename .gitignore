@@ -1,0 +1,9 @@
+node_modules/
+.env
+*.log
+npm-debug.log*
+OpenWA/
+yarn.lock.bak
+*.zip
+*.tar.gz
+.system_generated/

@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: mikrotik-panel
+    env: node
+    plan: free
+    region: frankfurt # or oregon, ohio, singapore
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /login
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MIKROTIK_HOST
+        sync: false
+      - key: MIKROTIK_PORT
+        value: 8728
+      - key: MIKROTIK_USER
+        sync: false
+      - key: MIKROTIK_PASSWORD
+        sync: false
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: 3306
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_SSL
+        value: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_USER
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false

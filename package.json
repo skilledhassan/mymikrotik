@@ -1,0 +1,21 @@
+{
+  "name": "mikrotik-panel",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node app.js",
+    "deploy": "node scripts/deploy-to-aapanel.js",
+    "openwa:start": "node OpenWA/dist/main.js",
+    "openwa:build": "npm --prefix OpenWA run build",
+    "expire": "node scripts/expire-customers.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mysql2": "^3.23.3",
+    "routeros-client": "^1.1.1"
+  }
+}
