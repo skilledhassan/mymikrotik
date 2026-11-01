@@ -5,7 +5,6 @@ echo   Pushing mikrotik-panel to GitHub: skilledhassan
 echo ===================================================
 echo.
 
-:: Set git identity for this repo if not already set
 git config user.name "skilledhassan"
 git config user.email "skilledhassan@users.noreply.github.com"
 
@@ -18,8 +17,8 @@ git commit -m "Deploy mikrotik-panel to GitHub for Render"
 echo 3. Setting main branch...
 git branch -M main
 
-echo 4. Pushing to https://github.com/skilledhassan/mymikrotik.git ...
-git push -u origin main
+echo 4. Overriding remote with your project files...
+git push -u origin main --force
 
 echo.
 echo ===================================================
