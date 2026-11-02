@@ -51,3 +51,5 @@ services:
         value: "true"
       - key: ADMIN_PHONE
         value: "03101361647"
+      - key: BOT_PHONE
+        value: "03063677708"

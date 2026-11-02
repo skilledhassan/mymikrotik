@@ -532,7 +532,7 @@ td {
                 <div>
                     <div style="font-size:16px; font-weight:800; color:#fff;">WhatsApp Admin Remote Control &amp; Daily Scheduler</div>
                     <div style="font-size:12.5px; color:var(--text-muted);">
-                        Authorized Admin: <strong style="color:#34d399;">03101361647</strong> &bull; Total control active via WhatsApp messages
+                        👑 Master Admin: <strong style="color:#34d399;">03101361647</strong> &bull; 🤖 Bot Number: <strong style="color:#38bdf8;">03063677708</strong>
                     </div>
                 </div>
             </div>
@@ -561,7 +561,7 @@ td {
             <!-- Quick WhatsApp Commands -->
             <div style="background:#0a1120; border:1px solid var(--border); border-radius:10px; padding:12px 14px;">
                 <div style="font-size:12px; font-weight:700; color:#a855f7; text-transform:uppercase; margin-bottom:8px;">
-                    📱 Live Commands (Send from 03101361647)
+                    📱 Live Commands (Send to 03063677708 from 03101361647)
                 </div>
                 <div style="font-size:12px; line-height:1.7; color:var(--text-muted);">
                     <div><code style="color:#25d366; background:#1e293b; padding:1px 5px; border-radius:4px;">!menu</code> All commands</div>

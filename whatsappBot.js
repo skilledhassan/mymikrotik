@@ -20,6 +20,8 @@ const whatsapp = require("./whatsapp");
 
 const PRIMARY_ADMIN_PHONE = "03101361647";
 const ADMIN_CLEAN_PHONE = "923101361647";
+const BOT_PHONE = "03063677708";
+const BOT_CLEAN_PHONE = "923063677708";
 
 function cleanNumber(phone) {
     if (!phone || typeof phone !== "string") return "";
