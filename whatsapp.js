@@ -111,8 +111,8 @@ function chooseVariation(variations, username, daysExpiredOrOffset = 0) {
 
 async function getSettings() {
     const defaults = {
-        openwa_base_url: process.env.OPENWA_BASE_URL || "http://localhost:2785/api",
-        openwa_api_key: process.env.OPENWA_API_KEY || "",
+        openwa_base_url: process.env.OPENWA_BASE_URL || "https://openwa-2paj.onrender.com/api",
+        openwa_api_key: process.env.OPENWA_API_KEY || "openwa-master-key-mikrotik-2026-secret-token",
         openwa_session_id: process.env.OPENWA_SESSION_ID || "default",
         openwa_country_code: process.env.OPENWA_DEFAULT_COUNTRY_CODE || "92",
         whatsapp_enabled: process.env.WHATSAPP_ENABLED !== "false",

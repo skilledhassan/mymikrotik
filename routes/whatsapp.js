@@ -1,8 +1,31 @@
 const express = require("express");
 const whatsapp = require("../whatsapp");
+const whatsappBot = require("../whatsappBot");
 const { renderWhatsAppPage } = require("../views/whatsappPage");
 
 const router = express.Router();
+
+/**
+ * POST /api/whatsapp/webhook
+ * Inbound webhook from OpenWA for incoming messages & events
+ */
+router.post("/webhook", async function (req, res) {
+    try {
+        const result = await whatsappBot.handleIncomingWebhook(req.body);
+        res.json({ ok: true, result });
+    } catch (e) {
+        console.error("[whatsapp-webhook] error:", e.message);
+        res.status(500).json({ ok: false, error: e.message });
+    }
+});
+
+/**
+ * GET /api/whatsapp/webhook
+ * Webhook health & verification endpoint
+ */
+router.get("/webhook", function (req, res) {
+    res.json({ ok: true, message: "WhatsApp Webhook receiver online" });
+});
 
 /**
  * GET /api/whatsapp/settings

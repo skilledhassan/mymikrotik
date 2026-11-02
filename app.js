@@ -9,6 +9,7 @@ const moneyRouter = require("./routes/money");
 const whatsappRouter = require("./routes/whatsapp");
 const analyticsRouter = require("./routes/analytics");
 const bandwidthWorker = require("./bandwidthWorker");
+const whatsappBot = require("./whatsappBot");
 const { renderDashboardPage } = require("./views/dashboardPage");
 const { renderMoneyPage } = require("./views/moneyPage");
 const { renderQueuesPage } = require("./views/queuesPage");
@@ -409,6 +410,9 @@ async function start() {
         // Start background daily bandwidth tracking worker
         bandwidthWorker.startWorker();
 
+        // Start WhatsApp 24/7 automated schedule & interactive bot
+        whatsappBot.startBot();
+
         // Automatic expiry & WhatsApp notification sweep
         if (AUTO_DISABLE_EXPIRED) {
             const expiryInterval = Number(process.env.EXPIRY_CHECK_INTERVAL_MS) || 60 * 60 * 1000;
@@ -435,7 +439,8 @@ async function start() {
 
     } catch (error) {
         console.error("Server startup error:", error.message || error);
-        // Start web panel anyway so login and offline management work
+        // Start web panel & WhatsApp bot anyway so login and offline management work
+        whatsappBot.startBot();
         app.listen(PORT, function () {
             console.log("Panel running (Router offline) at http://localhost:" + PORT);
         });

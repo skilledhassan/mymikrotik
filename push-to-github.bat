@@ -17,8 +17,8 @@ git commit -m "Deploy mikrotik-panel to GitHub for Render"
 echo 3. Setting main branch...
 git branch -M main
 
-echo 4. Overriding remote with your project files...
-git push -u origin main --force
+echo 4. Pushing updates to GitHub...
+git push origin main
 
 echo.
 echo ===================================================

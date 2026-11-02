@@ -39,3 +39,15 @@ services:
         value: admin
       - key: ADMIN_PASSWORD
         sync: false
+      - key: OPENWA_BASE_URL
+        value: https://openwa-2paj.onrender.com/api
+      - key: OPENWA_API_KEY
+        value: openwa-master-key-mikrotik-2026-secret-token
+      - key: OPENWA_SESSION_ID
+        value: default
+      - key: OPENWA_DEFAULT_COUNTRY_CODE
+        value: "92"
+      - key: WHATSAPP_ENABLED
+        value: "true"
+      - key: ADMIN_PHONE
+        value: "03101361647"

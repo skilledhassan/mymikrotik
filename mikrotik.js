@@ -55,6 +55,10 @@ client.rosApi.on("close", function () {
 let connectingPromise = null;
 
 async function connect() {
+    if (!process.env.MIKROTIK_HOST) {
+        console.warn("[mikrotik] MIKROTIK_HOST is not set in environment variables. Router connection skipped.");
+        return;
+    }
     if (connected && client.isConnected()) {
         return;
     }
