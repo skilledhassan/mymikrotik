@@ -1089,10 +1089,10 @@ if (btnConnect) {
             const data = await res.json();
             if (data.ok) {
                 showToast("✓ Bot Webhook Active! Linked with OpenWA.", "success");
-                alert("✓ WhatsApp Bot & Webhook are ACTIVE! 🎉\n\nSession: " + (data.sessionId || "Linked") + "\nWebhook: " + (data.webhookUrl || "Active") + "\n\nYou can now send !menu from your WhatsApp!");
+                alert("✓ WhatsApp Bot & Webhook are ACTIVE! 🎉\\n\\nSession: " + (data.sessionId || "Linked") + "\\nWebhook: " + (data.webhookUrl || "Active") + "\\n\\nYou can now send !menu from your WhatsApp!");
             } else {
                 showToast("Webhook setup failed: " + (data.error || "Check OpenWA"), "error");
-                alert("⚠️ Webhook setup returned: " + (data.error || JSON.stringify(data)) + "\n\nMake sure your WhatsApp device is linked by scanning the QR code first!");
+                alert("⚠️ Webhook setup returned: " + (data.error || JSON.stringify(data)) + "\\n\\nMake sure your WhatsApp device is linked by scanning the QR code first!");
             }
         } catch (e) {
             showToast("Error: " + e.message, "error");
