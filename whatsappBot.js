@@ -14,7 +14,7 @@ const whatsapp = require("./whatsapp");
 |   1. 24-Hour Automated Schedule ("Todo List for All Day Messages")
 |   2. Full Remote Admin Bot (MikroTik management, Billing, Customers)
 |   3. Router Health Watchdog WhatsApp Notifications
-|   4. Secure sender verification (Only Admin can issue commands)
+|   4. Secure sender verification (Supports separate numbers AND self-chat)
 |--------------------------------------------------------------------------
 */
 
@@ -46,9 +46,14 @@ async function registerWebhookWithOpenWA() {
         const settings = await whatsapp.getSettings();
         const baseUrl = (settings.openwa_base_url || "https://openwa-2paj.onrender.com/api").replace(/\/+$/, "");
         const apiKey = settings.openwa_api_key || "openwa-master-key-mikrotik-2026-secret-token";
-        const sessionId = settings.openwa_session_id || "default";
+        
+        // Resolve the real session UUID from OpenWA
+        const sessionId = await whatsapp.resolveSessionId(settings);
+        if (!sessionId) {
+            console.warn("[whatsapp-bot] No active session UUID found in OpenWA.");
+            return { ok: false, error: "No active session in OpenWA. Please scan QR code first." };
+        }
 
-        // Determine public callback URL
         const myUrl = process.env.RENDER_EXTERNAL_URL || "https://mymikrotik.onrender.com";
         const webhookUrl = `${myUrl}/api/whatsapp/webhook`;
 
@@ -57,35 +62,39 @@ async function registerWebhookWithOpenWA() {
             "X-API-Key": apiKey
         };
 
-        // Check existing webhooks
+        // Check existing webhooks for this session
         const listUrl = `${baseUrl}/sessions/${encodeURIComponent(sessionId)}/webhooks`;
         const checkRes = await fetch(listUrl, { headers }).catch(() => null);
         if (checkRes && checkRes.ok) {
             const list = await checkRes.json().catch(() => []);
             const alreadyRegistered = Array.isArray(list) && list.some(w => w.url === webhookUrl);
             if (alreadyRegistered) {
-                console.log("[whatsapp-bot] Webhook already registered with OpenWA:", webhookUrl);
-                return;
+                console.log("[whatsapp-bot] ✓ Webhook already registered with OpenWA for session:", sessionId);
+                return { ok: true, registered: true, sessionId, webhookUrl };
             }
         }
 
-        // Register new webhook
+        // Register webhook with OpenWA
         const registerRes = await fetch(listUrl, {
             method: "POST",
             headers,
             body: JSON.stringify({
                 url: webhookUrl,
-                events: ["message.received"]
+                events: ["message.received", "*"]
             })
         });
 
+        const regData = await registerRes.json().catch(() => ({}));
         if (registerRes.ok) {
-            console.log("[whatsapp-bot] ✓ Webhook registered successfully with OpenWA:", webhookUrl);
+            console.log("[whatsapp-bot] ✓ Webhook registered successfully with OpenWA for session:", sessionId);
+            return { ok: true, registered: true, sessionId, webhookUrl, data: regData };
         } else {
-            console.warn("[whatsapp-bot] Webhook register response:", registerRes.status);
+            console.warn("[whatsapp-bot] Webhook register response error:", registerRes.status, regData);
+            return { ok: false, status: registerRes.status, error: regData.message || regData.error };
         }
     } catch (e) {
-        console.warn("[whatsapp-bot] Could not register webhook with OpenWA yet:", e.message);
+        console.warn("[whatsapp-bot] Webhook register error:", e.message);
+        return { ok: false, error: e.message };
     }
 }
 
@@ -115,7 +124,7 @@ async function sendToAdmin(text) {
 
 async function runDailyScheduleTicker() {
     const now = new Date();
-    // Use Pakistan Time (UTC+5)
+    // Pakistan Time (UTC+5)
     const pkHour = (now.getUTCHours() + 5) % 24;
     const pkMinute = now.getUTCMinutes();
     const todayStr = dates.formatDate(now);
@@ -331,7 +340,6 @@ async function handleAdminCommand(text) {
             `📡 *ROUTER & NETWORK:*`,
             `• *!status* - Live CPU, RAM, Uptime & RouterOS info`,
             `• *!online* - Live active PPPoE customers & speeds`,
-            `• *!traffic* - Live total bandwidth (WAN & VLANs)`,
             `• *!reboot* - Safely reboot MikroTik router`,
             ``,
             `👥 *CUSTOMER MANAGEMENT:*`,
@@ -831,24 +839,59 @@ async function handleAdminCommand(text) {
 | Inbound Webhook Processor
 |--------------------------------------------------------------------------
 */
+function extractMessageText(msg) {
+    if (!msg) return "";
+    if (typeof msg.body === "string" && msg.body.trim()) return msg.body.trim();
+    if (typeof msg.text === "string" && msg.text.trim()) return msg.text.trim();
+    if (typeof msg.caption === "string" && msg.caption.trim()) return msg.caption.trim();
+    if (msg.message) {
+        if (typeof msg.message.conversation === "string" && msg.message.conversation.trim()) {
+            return msg.message.conversation.trim();
+        }
+        if (msg.message.extendedTextMessage && typeof msg.message.extendedTextMessage.text === "string") {
+            return msg.message.extendedTextMessage.text.trim();
+        }
+        if (msg.message.imageMessage && typeof msg.message.imageMessage.caption === "string") {
+            return msg.message.imageMessage.caption.trim();
+        }
+    }
+    return "";
+}
+
+function extractSenderPhone(msg) {
+    if (!msg) return "";
+    return (
+        msg.senderPhone ||
+        msg.from ||
+        msg.sender ||
+        msg.chatId ||
+        (msg.key && (msg.key.participant || msg.key.remoteJid)) ||
+        ""
+    );
+}
+
 async function handleIncomingWebhook(body) {
     if (!body) return { ok: false, reason: "empty-body" };
 
-    // Extract payload structure from OpenWA
-    const msg = body.payload || body.data || body;
-    const fromRaw = msg.from || msg.sender || msg.chatId || (msg.key && msg.key.remoteJid) || "";
-    const text = (msg.body || msg.text || (msg.message && msg.message.conversation) || "").trim();
+    // Extract payload structure from OpenWA (data, payload, or root)
+    const msg = body.data || body.payload || body;
+    const fromRaw = extractSenderPhone(msg);
+    const text = extractMessageText(msg);
 
-    // Ignore messages sent by the bot itself
-    if (msg.fromMe === true || (msg.key && msg.key.fromMe === true)) {
+    const isFromMe = msg.fromMe === true || (msg.key && msg.key.fromMe === true);
+
+    // If message is from me, allow it if it's Admin messaging themselves (Note to Self / chat with yourself)
+    const isSelfAdminCommand = isFromMe && isAdmin(fromRaw) && text.startsWith("!");
+
+    if (isFromMe && !isSelfAdminCommand) {
         return { ok: true, ignored: "from-me" };
     }
 
     if (!fromRaw || !text) {
-        return { ok: true, ignored: "no-sender-or-text" };
+        return { ok: true, ignored: "no-sender-or-text", fromRaw, hasText: Boolean(text) };
     }
 
-    console.log(`[whatsapp-bot] Inbound message from ${fromRaw}: "${text}"`);
+    console.log(`[whatsapp-bot] Inbound message from ${fromRaw}: "${text}" (isFromMe: ${isFromMe})`);
 
     // Verify if sender is Admin (03101361647)
     if (isAdmin(fromRaw)) {
@@ -888,8 +931,8 @@ let tickerTimer = null;
 function startBot() {
     console.log(`[whatsapp-bot] Starting WhatsApp Bot for Admin: ${PRIMARY_ADMIN_PHONE}`);
 
-    // Register Webhook with OpenWA
-    registerWebhookWithOpenWA();
+    // Initial webhook registration with OpenWA
+    setTimeout(registerWebhookWithOpenWA, 5000);
     setInterval(registerWebhookWithOpenWA, 5 * 60 * 1000); // Verify webhook every 5 mins
 
     // Start 60-second schedule ticker

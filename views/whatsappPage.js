@@ -517,6 +517,7 @@ td {
         </div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
             <div id="gwStatusPill" class="status-badge checking">⏳ Checking OpenWA...</div>
+            <button class="btn success sm" id="btnConnectWebhook" style="background:#059669; border-color:#10b981;">🔌 Activate WhatsApp Bot</button>
             <button class="btn success sm" id="btnScanQr">📲 Scan QR Code</button>
             <button class="btn sm" id="btnTestConn">🔄 Test Connection</button>
             <button class="btn primary sm" id="btnRunSweep">🚀 Run Expiry Sweep Now</button>
@@ -1077,6 +1078,30 @@ function closeQrModal() {
 
 document.getElementById("btnScanQr").addEventListener("click", loadQrCode);
 document.getElementById("btnTestConn").addEventListener("click", testConnection);
+
+const btnConnect = document.getElementById("btnConnectWebhook");
+if (btnConnect) {
+    btnConnect.addEventListener("click", async function() {
+        btnConnect.disabled = true;
+        btnConnect.textContent = "Connecting Bot...";
+        try {
+            const res = await fetch("/api/whatsapp/register-webhook", { method: "POST" });
+            const data = await res.json();
+            if (data.ok) {
+                showToast("✓ Bot Webhook Active! Linked with OpenWA.", "success");
+                alert("✓ WhatsApp Bot & Webhook are ACTIVE! 🎉\n\nSession: " + (data.sessionId || "Linked") + "\nWebhook: " + (data.webhookUrl || "Active") + "\n\nYou can now send !menu from your WhatsApp!");
+            } else {
+                showToast("Webhook setup failed: " + (data.error || "Check OpenWA"), "error");
+                alert("⚠️ Webhook setup returned: " + (data.error || JSON.stringify(data)) + "\n\nMake sure your WhatsApp device is linked by scanning the QR code first!");
+            }
+        } catch (e) {
+            showToast("Error: " + e.message, "error");
+        } finally {
+            btnConnect.disabled = false;
+            btnConnect.textContent = "🔌 Activate WhatsApp Bot";
+        }
+    });
+}
 
 // Initialize on page load
 loadSettings();

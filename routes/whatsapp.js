@@ -28,6 +28,19 @@ router.get("/webhook", function (req, res) {
 });
 
 /**
+ * POST /api/whatsapp/register-webhook
+ * Trigger manual registration of the webhook in OpenWA
+ */
+router.post("/register-webhook", async function (req, res) {
+    try {
+        const result = await whatsappBot.registerWebhookWithOpenWA();
+        res.json(result);
+    } catch (e) {
+        res.status(500).json({ ok: false, error: e.message });
+    }
+});
+
+/**
  * GET /api/whatsapp/settings
  */
 router.get("/settings", async function (req, res) {
