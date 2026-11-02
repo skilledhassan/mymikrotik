@@ -523,6 +523,56 @@ td {
         </div>
     </div>
 
+    <!-- WhatsApp Remote Control & 24-Hour Schedule Status Banner -->
+    <div class="card" style="margin-bottom: 20px; border-left: 4px solid var(--wa-green); background: linear-gradient(180deg, #111a2e 0%, #0d1526 100%);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span style="font-size:24px;">👑</span>
+                <div>
+                    <div style="font-size:16px; font-weight:800; color:#fff;">WhatsApp Admin Remote Control &amp; Daily Scheduler</div>
+                    <div style="font-size:12.5px; color:var(--text-muted);">
+                        Authorized Admin: <strong style="color:#34d399;">03101361647</strong> &bull; Total control active via WhatsApp messages
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex; gap:8px;">
+                <span class="badge" style="background:rgba(37,211,102,0.15); color:#25d366; border:1px solid #25d366; font-size:12px; padding:6px 10px;">
+                    🟢 Bot Engine Active
+                </span>
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">
+            <!-- 24-Hour Schedule -->
+            <div style="background:#0a1120; border:1px solid var(--border); border-radius:10px; padding:12px 14px;">
+                <div style="font-size:12px; font-weight:700; color:#38bdf8; text-transform:uppercase; margin-bottom:8px;">
+                    ⏰ 24-Hour Automated Message Schedule
+                </div>
+                <div style="font-size:12.5px; line-height:1.7; color:var(--text-main);">
+                    <div>☀️ <strong>08:00 AM</strong> &ndash; Morning Router &amp; Health Briefing</div>
+                    <div>📩 <strong>10:00 AM</strong> &ndash; Advance Expiry Reminders to Customers</div>
+                    <div>🔍 <strong>02:00 PM</strong> &ndash; Mid-day Network &amp; Health Audit</div>
+                    <div>🚨 <strong>06:00 PM</strong> &ndash; Expired Sweep &amp; Overdue Notices</div>
+                    <div>🌙 <strong>11:00 PM</strong> &ndash; Night DigiKhata Cashbook Summary</div>
+                </div>
+            </div>
+
+            <!-- Quick WhatsApp Commands -->
+            <div style="background:#0a1120; border:1px solid var(--border); border-radius:10px; padding:12px 14px;">
+                <div style="font-size:12px; font-weight:700; color:#a855f7; text-transform:uppercase; margin-bottom:8px;">
+                    📱 Live Commands (Send from 03101361647)
+                </div>
+                <div style="font-size:12px; line-height:1.7; color:var(--text-muted);">
+                    <div><code style="color:#25d366; background:#1e293b; padding:1px 5px; border-radius:4px;">!menu</code> All commands</div>
+                    <div><code style="color:#25d366; background:#1e293b; padding:1px 5px; border-radius:4px;">!status</code> Router CPU, RAM, uptime</div>
+                    <div><code style="color:#25d366; background:#1e293b; padding:1px 5px; border-radius:4px;">!online</code> Active PPPoE sessions</div>
+                    <div><code style="color:#25d366; background:#1e293b; padding:1px 5px; border-radius:4px;">!paid &lt;user&gt; &lt;amount&gt;</code> Bill + 30d auto-renew</div>
+                    <div><code style="color:#25d366; background:#1e293b; padding:1px 5px; border-radius:4px;">!renew &lt;user&gt; [days]</code> Extend validity</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Grid -->
     <div class="dashboard-grid">
         <!-- Gateway Configuration -->
