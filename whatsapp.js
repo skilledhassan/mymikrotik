@@ -741,6 +741,7 @@ module.exports = {
     testConnection,
     getQrCode,
     startSession,
+    resolveSessionId,
     checkAndSendExpiryReminders,
     getLogs,
     DEFAULT_BEFORE_TEMPLATE,
